@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+  neo4j:
+    uri: bolt://localhost:7687
+    authentication:
+      username: neo4j
+      password: test
+  data:
+    neo4j:
+      database: neo4j
+
+app:
+  jwt:
+    secret: dGVzdC1zZWNyZXQta2V5LWZvci1qd3QtdG9rZW4tZ2VuZXJhdGlvbi1zdXBlci1zZWN1cmUtdGVzdA==
+    expiration-ms: 86400000
+  groq:
+    api-key: test-key
+    api-url: https://api.groq.com/openai/v1/chat/completions
+    model: llama3-8b-8192

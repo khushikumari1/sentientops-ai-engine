@@ -1,0 +1,28 @@
+# Build
+target/
+build/
+*.class
+*.jar
+
+# Logs
+*.log
+build.log
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env / Secrets
+.env
+
+# Docker
+docker-compose.override.yml
+
+# Misc
+*.tmp
+*.swp

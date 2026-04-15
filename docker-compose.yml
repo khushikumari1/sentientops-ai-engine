@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: sentientops
+      POSTGRES_USER: sentientops
+      POSTGRES_PASSWORD: sentientops
+      NEO4J_URI: bolt://neo4j:7687
+      NEO4J_USER: neo4j
+      NEO4J_PASSWORD: sentientops
+      GROQ_API_KEY: ${GROQ_API_KEY}
+      APP_GROQ_API_URL: https://api.groq.com/openai/v1/chat/completions
+      APP_GROQ_MODEL: llama3-8b-8192
+      JWT_SECRET: ${JWT_SECRET:-c2VudGllbnRvcHMtYWktc2VjcmV0LWtleS1mb3Itand0LXRva2VuLWdlbmVyYXRpb24tc3VwZXItc2VjdXJl}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: sentientops
+      POSTGRES_USER: sentientops
+      POSTGRES_PASSWORD: sentientops
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sentientops"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  neo4j:
+    image: neo4j:5-community
+    environment:
+      NEO4J_AUTH: neo4j/sentientops
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4jdata:/data
+    healthcheck:
+      test: ["CMD-SHELL", "cypher-shell -u neo4j -p sentientops 'RETURN 1' || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  pgdata:
+  neo4jdata:

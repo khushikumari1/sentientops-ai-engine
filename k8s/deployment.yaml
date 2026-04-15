@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sentientops-ai
+  labels:
+    app: sentientops-ai
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sentientops-ai
+  template:
+    metadata:
+      labels:
+        app: sentientops-ai
+    spec:
+      containers:
+        - name: sentientops-ai
+          image: sentientops-ai:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: POSTGRES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: sentientops-config
+                  key: postgres-host
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: sentientops-config
+                  key: postgres-db
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: sentientops-secrets
+                  key: postgres-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sentientops-secrets
+                  key: postgres-password
+            - name: NEO4J_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: sentientops-config
+                  key: neo4j-uri
+            - name: NEO4J_USER
+              valueFrom:
+                secretKeyRef:
+                  name: sentientops-secrets
+                  key: neo4j-user
+            - name: NEO4J_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sentientops-secrets
+                  key: neo4j-password
+            - name: GROQ_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sentientops-secrets
+                  key: groq-api-key
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: sentientops-secrets
+                  key: jwt-secret
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
