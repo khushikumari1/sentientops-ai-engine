@@ -2,83 +2,157 @@
 
 ### Autonomous Incident Analysis & Intelligent Ops Platform
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Java-17-orange?style=flat-square&logo=openjdk&logoColor=white" />
+  <img src="https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?style=flat-square&logo=springboot&logoColor=white" />
+  <img src="https://img.shields.io/badge/PostgreSQL-DB-4169E1?style=flat-square&logo=postgresql&logoColor=white" />
+  <img src="https://img.shields.io/badge/Neo4j-GraphDB-008CC1?style=flat-square&logo=neo4j&logoColor=white" />
+  <img src="https://img.shields.io/badge/Groq-LLM-7B2FBE?style=flat-square" />
+  <img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker&logoColor=white" />
+  <img src="https://img.shields.io/badge/Status-Active-22c55e?style=flat-square" />
+</p>
+
+<p align="center">
+  <b>AI-powered system that detects, analyzes, learns, and suggests fixes for production incidents</b>
+</p>
+
 ---
 
 ## 🧠 Overview
 
-**SentientOps AI Engine** is an AI-powered incident management system that analyzes system logs, identifies root causes, suggests fixes, and continuously learns from past incidents using graph-based memory.
+**SentientOps AI Engine** is an intelligent backend platform designed to assist SRE and DevOps teams by transforming raw production logs into actionable intelligence — identifying root causes, suggesting fixes, and learning from every incident.
 
-Designed for modern distributed systems, it combines **AI + Observability + Automation** to assist SRE and DevOps workflows.
+Built to move toward **self-healing infrastructure**.
 
 ---
 
-## 🔥 Key Features
+## 💡 Why SentientOps?
 
-* 🤖 AI-powered root cause analysis using Groq LLM
-* 🧠 Graph-based learning with Neo4j (incident memory)
-* 📊 Incident ingestion and tracking (PostgreSQL)
-* 🔐 Secure APIs with JWT authentication
-* ⚡ Real-time log analysis
-* 📈 Failure prediction engine
-* ⚙️ Kubernetes recovery actions *(Work in Progress)*
+Modern systems generate massive volumes of logs — but lack intelligent interpretation. SentientOps bridges the gap between **observability and intelligence** by:
+
+- Converting raw logs → structured insights
+- Learning from past incidents via graph relationships
+- Assisting engineers in faster, smarter debugging
+
+---
+
+## ⚡ Key Features
+
+| Feature | Description |
+|---|---|
+| 🤖 AI Root Cause Analysis | Uses Groq LLM to interpret logs and generate structured insights |
+| 🧠 Persistent Graph Memory | Stores incidents, causes, and fixes as relationships in Neo4j |
+| 📊 Incident Management | Tracks system health, logs, severity, and resolution in PostgreSQL |
+| 🔐 Secure API Layer | JWT-based authentication + role-based access control |
+| 📈 Failure Prediction Engine | Detects potential issues from historical patterns |
+| ⚙️ Remediation Engine *(WIP)* | Designed for Kubernetes-based automated recovery actions |
 
 ---
 
 ## 🏗️ Architecture
 
 ```
-Incident Logs → AI Analysis → Root Cause → Suggested Fix
-        ↓                         ↓
-   PostgreSQL              Neo4j Memory Graph
+Incident Logs
+      │
+      ▼
+AI Analysis (Groq LLM)
+      │
+      ▼
+Root Cause + Suggested Fix
+   │                    │
+   ▼                    ▼
+PostgreSQL          Neo4j Graph
+(Incidents)          (Memory)
+   │                    │
+   └────────┬───────────┘
+            ▼
+  Future Predictions & Learning
+```
+
+**System flow:**
+1. Incident is ingested
+2. AI analyzes logs → generates root cause + fix
+3. Results stored in PostgreSQL + Neo4j
+4. Future incidents leverage past knowledge for faster resolution
+
+---
+
+## 📂 Project Structure
+
+```
+src/
+ ├── ai/            # Groq LLM integration
+ ├── controller/    # REST API endpoints
+ ├── service/       # Business logic
+ ├── repository/    # Database access layer
+ ├── model/         # Entities & DTOs
+ ├── security/      # JWT authentication
+ └── memory/        # Neo4j graph learning
 ```
 
 ---
 
-## 🧪 API Endpoints
+## 🧪 API Reference
 
 ### 🔐 Authentication
 
-* `POST /api/auth/signup` → Register user
-* `POST /api/auth/login` → Get JWT token
-
----
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/auth/signup` | Register a new user |
+| `POST` | `/api/auth/login` | Obtain JWT token |
 
 ### 📊 Incidents
 
-* `POST /api/incidents` → Create incident
-* `GET /api/incidents` → Get all incidents
-* `GET /api/incidents/unresolved` → Get unresolved incidents
-* `GET /api/incidents/service/{serviceName}` → Get by service
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/incidents` | Create a new incident |
+| `GET` | `/api/incidents` | List all incidents |
+| `GET` | `/api/incidents/unresolved` | Get unresolved incidents |
+| `GET` | `/api/incidents/service/{serviceName}` | Get incidents by service |
 
----
+### 🤖 AI Analysis
 
-### 🤖 AI Reasoning
-
-* `POST /api/ai/analyze` → Analyze logs using AI
-
----
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/ai/analyze` | Analyze logs using Groq LLM |
 
 ### 📈 Predictions
 
-* `GET /api/predict/failures` → Predict potential failures
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/predict/failures` | Predict potential failures |
+
+### ⚙️ Actions *(WIP)*
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/actions/execute` | Trigger Kubernetes-based recovery *(currently mocked)* |
 
 ---
 
-### ⚙️ Actions (WIP)
+## 🧪 Example: AI Analysis
 
-* `POST /api/actions/execute` → Kubernetes-based recovery actions *(currently mocked)*
+**Request**
 
----
-
-## 🧪 Sample Request
-
-### AI Analysis
+```http
+POST /api/ai/analyze
+Content-Type: application/json
+Authorization: Bearer <JWT_TOKEN>
+```
 
 ```json
-POST /api/ai/analyze
-
 {
   "logs": "Kafka consumer lag increasing. Consumer group not keeping up with producer rate."
+}
+```
+
+**Response**
+
+```json
+{
+  "rootCause": "Kafka consumer lag due to high producer rate",
+  "suggestedFix": "Scale consumers or rebalance partitions",
+  "confidenceScore": 0.95
 }
 ```
 
@@ -89,29 +163,25 @@ POST /api/ai/analyze
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/sentientops-ai-engine.git
+git clone https://github.com/khushikumari1/sentientops-ai-engine.git
 cd sentientops-ai-engine
 ```
 
----
-
 ### 2. Set environment variables
 
-Create a `.env` file:
+Create a `.env` file in the project root:
 
-```
+```env
 GROQ_API_KEY=your_api_key_here
 ```
 
----
-
-### 3. Run the application
+### 3. Start the full system
 
 ```bash
 docker-compose up --build
 ```
 
----
+This starts the API server, PostgreSQL, and Neo4j together.
 
 ### 4. Access Swagger UI
 
@@ -123,33 +193,56 @@ http://localhost:8080/swagger-ui/index.html
 
 ## 🔐 Authentication Flow
 
-1. Register → `/api/auth/signup`
-2. Login → `/api/auth/login`
-3. Use JWT token:
-
 ```
-Authorization: Bearer <your_token>
+1. POST /api/auth/signup   →  Register user
+2. POST /api/auth/login    →  Receive JWT token
+3. Add to all requests:
+
+   Authorization: Bearer <your_token>
 ```
 
 ---
 
 ## 🧠 Tech Stack
 
-* **Backend**: Spring Boot (Java)
-* **AI**: Groq LLM API
-* **Database**: PostgreSQL
-* **Graph DB**: Neo4j
-* **Security**: Spring Security + JWT
-* **Containerization**: Docker
+| Layer | Technology |
+|---|---|
+| Backend | Spring Boot 3.x (Java 17) |
+| AI / LLM | Groq LLM |
+| Relational DB | PostgreSQL |
+| Graph DB | Neo4j |
+| Security | Spring Security + JWT |
+| DevOps | Docker / Docker Compose |
 
 ---
 
-## 🚧 Future Improvements
+## 💡 Design Philosophy
 
-* Full Kubernetes integration for automated recovery
-* Frontend dashboard (React / Streamlit)
-* Incident similarity search using Neo4j
-* Auto-remediation based on AI confidence
+> Separate intelligence (AI) from execution (Kubernetes)
+
+This ensures:
+- **Modularity** — each component can evolve independently
+- **Extensibility** — swap LLMs or databases without rewrites
+- **Production readiness** — clean separation of concerns
+
+---
+
+## 🚀 What Makes This Unique?
+
+- Combines **LLMs + Graph Databases + DevOps tooling** in one backend
+- Goes beyond monitoring → **intelligent root cause reasoning**
+- Introduces a **learning feedback loop** — the system gets smarter over time
+- Designed like a **real production-grade backend**
+
+---
+
+## 🚧 Roadmap
+
+- [ ] Full Kubernetes auto-remediation
+- [ ] UI dashboard (React / Streamlit)
+- [ ] Incident similarity search via Neo4j graph queries
+- [ ] AI-driven automated resolution
+- [ ] Continuous learning feedback loop
 
 ---
 
@@ -161,6 +254,4 @@ Authorization: Bearer <your_token>
 
 ## ⭐ Vision
 
-To build an **autonomous incident response system** that can detect, analyze, learn, and eventually resolve failures without human intervention.
-
----
+To build an **autonomous SRE system** that not only detects failures — but **understands, learns, and resolves them intelligently**.
